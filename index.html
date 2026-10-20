@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        teal: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-dark {
+            background: rgba(6, 78, 59, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .animate-float {
+            animation: floatSlow 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-move {
+            display: inline-block;
+            animation: ticker 35s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0d9488;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+
+        html {
+            scroll-padding-top: 5.5rem;
+        }
+
+        body {
+            min-width: 320px;
+            overflow-x: hidden;
+        }
+
+        section[id] {
+            scroll-margin-top: 5.5rem;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-wrap: balance;
+        }
+
+        button,
+        a,
+        input,
+        textarea,
+        select {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        textarea:focus-visible,
+        select:focus-visible {
+            outline: 3px solid rgba(16, 185, 129, 0.65);
+            outline-offset: 3px;
+        }
+
+        #searchInput {
+            min-width: 0;
+        }
+
+        #mobileMenu {
+            max-height: calc(100dvh - 5rem);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        .modal-backdrop > div {
+            max-height: calc(100dvh - 2rem);
+            overscroll-behavior: contain;
+        }
+
+        @media (max-width: 1023px) {
+            body {
+                padding-bottom: calc(5.25rem + env(safe-area-inset-bottom));
+            }
+
+            #mobileActionBar {
+                padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+            }
+
+            #helpWidget {
+                right: max(1rem, env(safe-area-inset-right));
+                bottom: calc(5.75rem + env(safe-area-inset-bottom));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            header > div:first-child {
+                gap: 0.75rem;
+            }
+
+            header > div:first-child > a {
+                min-width: 0;
+            }
+
+            #brandNameDisplay {
+                max-width: 56vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            #hero {
+                min-height: auto;
+                padding-block: 3.5rem;
+            }
+
+            #hero h1 {
+                font-size: clamp(2.125rem, 7vw, 3.25rem);
+                line-height: 1.1;
+            }
+
+            #heroStoreImage {
+                height: clamp(16rem, 76vw, 26.25rem);
+            }
+
+            section.py-20 {
+                padding-block: 3.5rem;
+            }
+
+            section.py-16 {
+                padding-block: 3rem;
+            }
+
+            section h2 {
+                font-size: clamp(1.65rem, 5vw, 1.875rem);
+                line-height: 1.2;
+            }
+
+            #wizardTabs {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding: 0.25rem 0.25rem 0.75rem;
+                scroll-snap-type: x proximity;
+                scrollbar-width: thin;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #wizardTabs > button {
+                flex: 0 0 auto;
+                scroll-snap-align: start;
+            }
+
+            #categoriesGrid > button {
+                height: auto;
+                min-height: 11rem;
+                padding: 0.875rem;
+            }
+
+            #categoriesGrid h3 {
+                font-size: 0.95rem;
+                line-height: 1.25;
+            }
+
+            #toast {
+                right: 1rem;
+                left: 1rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            #mobileActionBar {
+                padding-right: 0.25rem;
+                padding-left: 0.25rem;
+            }
+
+            #mobileActionBar > * {
+                min-width: 0;
+                padding-right: 0.375rem;
+                padding-left: 0.375rem;
+            }
+
+            #deliveryModal form .grid-cols-2,
+            #medicineRequestModal form .grid-cols-2 {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .search-result-icon {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- ANNOUNCEMENT TICKER BANNER -->
+    <div class="bg-emerald-950 text-emerald-200 text-xs md:text-sm font-medium py-2.5 overflow-hidden border-b border-emerald-800/50">
+        <div class="ticker-wrap flex items-center">
+            <div class="ticker-move flex items-center space-x-12" id="announcementTicker">
+                <!-- Injected dynamically via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION HEADER -->
+    <header class="sticky top-0 z-40 glass-panel shadow-sm transition-all duration-300 border-b border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3 group">
+                <div id="storeLogo" class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-700 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20 group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                    <i id="storeLogoFallback" class="fa-solid font-bold fa-prescription-bottle-medical text-xl"></i>
+                    <img id="storeLogoImage" class="hidden absolute inset-0 h-full w-full object-contain bg-white" alt="">
+                </div>
+                <div>
+                    <span class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 block leading-none" id="brandNameDisplay"></span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-emerald-600 block mt-1" id="locationTagDisplay">
+                    </span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-semibold text-sm text-slate-700">
+                <a href="#hero" class="hover:text-emerald-700 transition-colors">Home</a>
+                <a href="#search" class="hover:text-emerald-700 transition-colors">Find Medicine</a>
+                <a href="#categories" class="hover:text-emerald-700 transition-colors">Categories</a>
+                <a href="#delivery" class="hover:text-emerald-700 transition-colors">Home Delivery</a>
+                <a href="#gallery" class="hover:text-emerald-700 transition-colors">Store Gallery</a>
+                <a href="#location" class="hover:text-emerald-700 transition-colors">Location</a>
+            </nav>
+
+            <div class="hidden sm:flex items-center space-x-3">
+                <button onclick="openModal('prescriptionModal')" class="px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-100/80 hover:bg-emerald-200/80 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-medical text-emerald-600"></i> Upload Rx
+                </button>
+                <a id="navCallBtn" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-700 to-teal-600 hover:from-emerald-800 hover:to-teal-700 shadow-lg shadow-emerald-700/20 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-phone"></i> Call Pharmacy
+                </a>
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="lg:hidden text-slate-700 hover:text-emerald-700 p-2 focus:outline-none" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars-staggered text-2xl"></i>
+            </button>
+        </div>
+
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-slate-200 px-6 py-5 space-y-4">
+            <a href="#hero" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Home</a>
+            <a href="#search" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Find Medicine</a>
+            <a href="#categories" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Categories</a>
+            <a href="#delivery" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Home Delivery</a>
+            <a href="#gallery" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Store Gallery</a>
+            <a href="#location" onclick="toggleMobileMenu()" class="block font-semibold text-slate-700 hover:text-emerald-700">Location & Contact</a>
+            <div class="pt-3 border-t border-slate-100 flex flex-col gap-3">
+                <button onclick="openModal('prescriptionModal'); toggleMobileMenu();" class="w-full py-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-100 text-center">
+                    <i class="fa-solid fa-file-medical mr-1"></i> Upload Prescription
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative min-h-[85vh] flex items-center overflow-hidden py-12 md:py-20 bg-gradient-to-b from-emerald-50/50 via-white to-slate-50">
+        <div class="absolute top-10 left-10 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-center">
+                <div class="md:col-span-7 space-y-6 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/80 border border-emerald-200/80 text-emerald-800 text-xs font-bold uppercase tracking-wider shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600 animate-ping"></span>
+                        <i class="fa-solid fa-location-dot text-emerald-600"></i> <span id="heroLocation"></span>
+                    </div>
+                    
+                    <h1 class="font-extrabold text-slate-900 leading-[1.1] tracking-tight">
+                        <span id="heroBrandName" class="block text-5xl sm:text-6xl lg:text-7xl text-emerald-900"></span>
+                        <span class="block text-xl sm:text-2xl lg:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-800 mt-2">
+                            Your trusted pharmacy, right around the corner.
+                        </span>
+                    </h1>
+                    
+                    <p class="text-lg text-slate-600 max-w-2xl mx-auto md:mx-0 font-normal leading-relaxed">
+                        Search the live inventory, browse store information, or send a request directly.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4">
+                        <a href="#search" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-base shadow-xl shadow-emerald-900/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search Medicines
+                        </a>
+                        <button onclick="openModal('deliveryModal')" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-bold text-base shadow-lg shadow-slate-200/50 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-3">
+                            <i class="fa-solid fa-truck-fast text-emerald-600"></i> Free Home Delivery
+                        </button>
+                    </div>
+
+                    <div class="pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-4 max-w-lg mx-auto md:mx-0">
+                        <div>
+                            <p class="text-xl md:text-2xl font-extrabold text-emerald-800">Live</p>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5">Store Inventory</p>
+                        </div>
+                        <div>
+                            <p class="text-xl md:text-2xl font-extrabold text-emerald-800">Express</p>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5">Local Home Delivery</p>
+                        </div>
+                        <div>
+                            <p class="text-xl md:text-2xl font-extrabold text-emerald-800">Verified</p>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5">Licensed Pharmacists</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                            <img id="heroStoreImage" alt="" class="w-full h-[420px] object-cover hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 right-6 text-white">
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/90 text-[11px] font-bold uppercase tracking-wider mb-2 inline-block">Store Front</span>
+                                <h3 id="heroStoreTitle" class="text-xl font-bold"></h3>
+                                <p class="text-xs text-slate-200 mt-1">Store information</p>
+                            </div>
+                        </div>
+
+                        <div class="absolute -top-6 -left-6 glass-panel rounded-2xl p-4 shadow-xl border border-white/80 hidden sm:flex items-center gap-3 animate-float">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700">
+                                <i class="fa-solid fa-circle-check text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-900">Live inventory</p>
+                                <p class="text-[11px] font-semibold text-emerald-700">Check current availability</p>
+                            </div>
+                        </div>
+
+                        <div class="absolute -bottom-6 -right-6 glass-panel rounded-2xl p-4 shadow-xl border border-white/80 hidden sm:flex items-center gap-3 animate-float" style="animation-delay: 2s;">
+                            <div class="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center text-teal-700">
+                                <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-900">Delivery information</p>
+                                <p class="text-[11px] font-semibold text-slate-500">Contact the store for details</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEDICINE SEARCH AND DISCOVERY -->
+    <section id="search" class="py-16 bg-slate-50 border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Live Inventory</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">What do you need today?</h2>
+                <p class="text-sm text-slate-600 mt-2">Search for a medicine or symptom, or browse items by category.</p>
+            </div>
+
+            <div class="relative max-w-3xl mx-auto">
+                <div class="relative flex items-center shadow-2xl rounded-2xl border-2 border-emerald-600/30 focus-within:border-emerald-600 transition-all bg-white">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-xl pl-6"></i>
+                    <input type="text" id="searchInput" oninput="scheduleSearch()" placeholder="Search medicines, categories, or keywords like fever..." class="w-full py-5 px-4 text-base md:text-lg text-slate-800 placeholder-slate-400 focus:outline-none rounded-2xl bg-transparent">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden pr-6 text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <p class="mt-2 px-2 text-xs text-slate-500">Symptom searches like fever match keywords in item names, categories, and descriptions. Minor spelling mistakes are supported.</p>
+            </div>
+
+            <div id="quickSearches" class="max-w-3xl mx-auto mt-4 flex flex-wrap items-center justify-center gap-2" aria-label="Quick searches"></div>
+
+            <div id="searchResultsContainer" class="mt-8 grid grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto">
+                <!-- Results Injected via JS -->
+            </div>
+
+            <div class="mt-14 border-t border-slate-200 pt-10">
+                <div class="text-center max-w-2xl mx-auto mb-8">
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900">Browse by category</h3>
+                    <p class="text-sm text-slate-600 mt-2">Choose a category to explore items and request details.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-3 mb-8" id="wizardTabs"></div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6" id="wizardGridContainer">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEDICINE CATEGORIES -->
+    <section id="categories" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Organized Healthcare</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Explore Medicine Categories</h2>
+                </div>
+                <p class="text-sm text-slate-500 mt-2 md:mt-0 max-w-md">Browse our wide range of pharmaceutical items, surgical supplies, and everyday personal care products.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6" id="categoriesGrid">
+                <!-- Dynamic Category Cards JS Injection -->
+            </div>
+        </div>
+    </section>
+
+    <!-- HOME DELIVERY SECTION -->
+    <section id="delivery" class="py-20 bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-950 text-white relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-1/2 h-full bg-emerald-600/10 blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-800/80 border border-emerald-700 text-emerald-300 text-xs font-bold">
+                        <i class="fa-solid fa-truck-fast"></i> Local Doorstep Delivery
+                    </div>
+                    
+                    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">
+                        Need your medicines at home? <br>
+                        <span class="text-emerald-400">We deliver to your doorstep.</span>
+                    </h2>
+                    
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        Send us what you need. Our team will verify medicine availability, confirm total pricing, and dispatch your order promptly to your doorstep.
+                    </p>
+
+                    <div class="grid grid-cols-3 gap-4 pt-4 border-t border-emerald-800/80">
+                        <div class="space-y-1">
+                            <span class="text-xl font-extrabold text-emerald-400">01</span>
+                            <p class="text-xs font-bold text-white">Send Request</p>
+                            <p class="text-[11px] text-slate-400">List items or upload Rx</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-xl font-extrabold text-emerald-400">02</span>
+                            <p class="text-xs font-bold text-white">Stock Check</p>
+                            <p class="text-[11px] text-slate-400">Pharmacist verifies</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-xl font-extrabold text-emerald-400">03</span>
+                            <p class="text-xs font-bold text-white">Fast Delivery</p>
+                            <p class="text-[11px] text-slate-400">Delivered to home</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                        <button onclick="openModal('deliveryModal')" class="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-xl transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Request Home Delivery
+                        </button>
+                        <a id="deliveryCallBtn" class="px-8 py-4 rounded-2xl bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-white font-bold text-sm transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-phone"></i> Call Pharmacy Instead
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6">
+                    <div class="glass-dark p-8 rounded-3xl border border-emerald-700/50 shadow-2xl relative">
+                        <div class="flex items-center justify-between pb-6 border-b border-emerald-800/80">
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Home Delivery Hours</h3>
+                                <p class="text-xs text-emerald-300">Fast local dispatch window</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs">Store details</span>
+                        </div>
+                        
+                        <div class="py-6 space-y-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-300 font-medium"><i class="fa-regular fa-clock mr-2 text-emerald-400"></i> Store Hours:</span>
+                                <span class="font-bold text-white" id="deliveryHours"></span>
+                            </div>
+                            <div class="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-xs text-slate-300 flex items-start gap-3">
+                                <i class="fa-solid fa-circle-info text-emerald-400 text-base mt-0.5"></i>
+                                <span>Prescription items require a valid uploaded prescription prior to dispatch as per regulatory requirements.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE MARUTI MEDICINES? -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Our Core Promise</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1" id="whyStoreHeading">Why Choose Us?</h2>
+                <p class="text-sm text-slate-600 mt-2">Healthcare isn't just about medicine. It's about trust and genuine community support.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Trusted Service</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">Friendly, patient-first assistance from experienced pharmacists whenever you step in or call.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Convenient Location</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">Check the store address and directions below before visiting.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-house-medical-flag"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Doorstep Delivery</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">Medicine requests fulfilled straight from our physical inventory to the comfort of your home.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Wide Selection</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">From rare prescription formulations to baby care and diagnostic equipment in stock.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Personal Guidance</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">Get helpful advice on OTC usage, storage instructions, and generic medicine queries.</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Authentic Sourcing</h3>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">Direct procurement from authorized pharmaceutical distributors ensuring genuine batch quality.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORE GALLERY -->
+    <section id="gallery" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Store Gallery</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Store Gallery & Premises</h2>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-4 md:mt-0" id="galleryFilters">
+                    <button onclick="filterGallery('all')" class="gallery-btn active px-4 py-2 rounded-xl text-xs font-bold bg-emerald-800 text-white">All Photos</button>
+                    <button onclick="filterGallery('store')" class="gallery-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Inside Store</button>
+                    <button onclick="filterGallery('products')" class="gallery-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Shelves & Items</button>
+                    <button onclick="filterGallery('team')" class="gallery-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Pharmacy Team</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="galleryGrid">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- HEALTH & WELLNESS ADVICE SECTION -->
+    <section class="py-16 bg-emerald-50/60 border-y border-emerald-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Pharmacy Guidance</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Health & Wellness Insights</h2>
+                <p class="text-sm text-slate-600 mt-2">Essential health awareness tips provided for informational support.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="p-6">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md inline-block mb-3">Medicine Storage</span>
+                        <h3 class="font-bold text-slate-900 text-lg mb-2">Storing Medicines Correctly at Home</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Keep medicines away from heat and direct sunlight. Insulin and probiotic syrups need strict refrigeration...</p>
+                    </div>
+                    <div class="px-6 pb-6 pt-2">
+                        <button onclick="openHealthModal('storage')" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1">Read Full Tip <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="p-6">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-teal-700 bg-teal-100 px-2.5 py-1 rounded-md inline-block mb-3">First Aid Basics</span>
+                        <h3 class="font-bold text-slate-900 text-lg mb-2">Essential Home First Aid Kit List</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Every home should keep antiseptic solution, sterile gauze, pain relievers, adhesive tape, and a digital thermometer...</p>
+                    </div>
+                    <div class="px-6 pb-6 pt-2">
+                        <button onclick="openHealthModal('firstaid')" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1">Read Full Tip <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="p-6">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md inline-block mb-3">Seasonal Care</span>
+                        <h3 class="font-bold text-slate-900 text-lg mb-2">Staying Hydrated During Fever</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Oral rehydration solutions (ORS) restore lost electrolytes quickly during viral fever or stomach infection...</p>
+                    </div>
+                    <div class="px-6 pb-6 pt-2">
+                        <button onclick="openHealthModal('hydration')" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1">Read Full Tip <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-[11px] text-slate-400 text-center mt-8">* Educational content only. Always consult a certified medical practitioner for diagnosis and prescription advice.</p>
+        </div>
+    </section>
+
+    <!-- LOCATION & CONTACT US SECTION -->
+    <section id="location" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-5 space-y-6">
+                    <div>
+                        <span class="text-xs font-extrabold tracking-widest text-emerald-700 uppercase">Visit Our Store</span>
+                        <h2 class="text-3xl font-extrabold text-slate-900 mt-1" id="contactStoreHeading">Find the Store</h2>
+                        <p class="text-sm text-slate-600 mt-2">Use the contact details configured by the store.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-location-dot text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Pharmacy Location</h4>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed" id="contactAddress"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-phone text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Direct Phone Numbers</h4>
+                                <p class="text-xs text-slate-600 mt-1 font-semibold" id="contactPhones"></p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid fa-clock text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Opening Hours</h4>
+                                <p class="text-xs text-slate-600 mt-1" id="contactHours"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <a id="getDirectionsBtn" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs text-center shadow-lg transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-diamond-turn-right"></i> Get Directions
+                        </a>
+                        <a id="whatsappBtn" target="_blank" rel="noopener noreferrer" class="px-5 py-3.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold text-xs text-center transition-all flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-emerald-700 text-sm"></i> WhatsApp Us
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <div id="mapPanel" class="w-full h-full min-h-[380px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 relative bg-slate-100 hidden">
+                        <iframe id="storeMap" class="w-full h-full min-h-[380px] border-0"
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+
+                        <div class="absolute bottom-4 left-4 right-4 sm:right-auto glass-panel p-4 rounded-2xl shadow-lg border border-white flex items-center gap-3">
+                            <div class="w-4 h-4 rounded-full bg-emerald-600 animate-ping"></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-900">Store Location</p>
+                                <p class="text-[11px] text-slate-600" id="mapCaption"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 text-slate-400 pt-16 pb-12 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-900">
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-prescription-bottle-medical text-lg"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-white" id="footerStoreName"></span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-sm">
+                        <span id="footerStoreDescription"></span>
+                    </p>
+                    <div class="pt-2 flex items-center space-x-3">
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-emerald-800 text-slate-300 hover:text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-emerald-800 text-slate-300 hover:text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-instagram text-xs"></i></a>
+                        <a id="footerWhatsapp" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-emerald-800 text-slate-300 hover:text-white flex items-center justify-center transition-colors"><i class="fa-brands fa-whatsapp text-xs"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Quick Navigation</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><a href="#hero" class="hover:text-emerald-400 transition-colors">Home Overview</a></li>
+                        <li><a href="#search" class="hover:text-emerald-400 transition-colors">Medicine Search</a></li>
+                        <li><a href="#categories" class="hover:text-emerald-400 transition-colors">Category Explorer</a></li>
+                        <li><a href="#delivery" class="hover:text-emerald-400 transition-colors">Home Delivery System</a></li>
+                        <li><a href="#gallery" class="hover:text-emerald-400 transition-colors">Store Gallery</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Services</h4>
+                    <ul class="space-y-2.5 text-xs">
+                        <li><button onclick="openModal('prescriptionModal')" class="hover:text-emerald-400 transition-colors text-left">Upload Prescription</button></li>
+                        <li><button onclick="openModal('medicineRequestModal')" class="hover:text-emerald-400 transition-colors text-left">Custom Medicine Request</button></li>
+                        <li><button onclick="openModal('deliveryModal')" class="hover:text-emerald-400 transition-colors text-left">Free Home Delivery</button></li>
+                        <li><a href="#location" class="hover:text-emerald-400 transition-colors">Store Directions</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Pharmacy Hours</h4>
+                    <p class="text-xs leading-relaxed text-slate-400">
+                        <span id="footerHours"></span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© <span id="yearSpan"></span> <span id="footerCopyrightName"></span></p>
+                <p class="text-[11px]">Designed for trusted local healthcare.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- QUICK ACTION DOCK (DESKTOP FLOATING) -->
+    <div class="hidden lg:flex fixed bottom-6 left-1/2 transform -translate-x-1/2 z-30 glass-dark px-6 py-3 rounded-2xl border border-emerald-600/40 shadow-2xl items-center gap-6 text-white text-xs font-bold">
+        <a href="#search" class="hover:text-emerald-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-emerald-400"></i> Search
+        </a>
+        <span class="w-px h-4 bg-emerald-800"></span>
+        <button onclick="openModal('deliveryModal')" class="hover:text-emerald-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-truck-fast text-emerald-400"></i> Delivery
+        </button>
+        <span class="w-px h-4 bg-emerald-800"></span>
+        <a id="dockCallBtn" class="hover:text-emerald-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-phone text-emerald-400"></i> Call Store
+        </a>
+        <span class="w-px h-4 bg-emerald-800"></span>
+        <a href="#location" class="hover:text-emerald-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-location-dot text-emerald-400"></i> Location
+        </a>
+    </div>
+
+    <!-- MOBILE STICKY BOTTOM ACTION BAR -->
+    <div id="mobileActionBar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-2xl px-2 py-2 flex items-center justify-around">
+        <a href="#search" class="flex flex-col items-center justify-center p-2 text-slate-700 hover:text-emerald-700 min-w-[64px]">
+            <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            <span class="text-[10px] font-bold mt-1">Search</span>
+        </a>
+        <button onclick="openModal('deliveryModal')" class="flex flex-col items-center justify-center p-2 text-slate-700 hover:text-emerald-700 min-w-[64px]">
+            <i class="fa-solid fa-truck-fast text-lg text-emerald-700"></i>
+            <span class="text-[10px] font-bold mt-1">Delivery</span>
+        </button>
+        <a id="mobileBottomCall" class="flex flex-col items-center justify-center p-2 bg-emerald-700 text-white rounded-xl min-w-[64px] shadow-md">
+            <i class="fa-solid fa-phone text-base"></i>
+            <span class="text-[10px] font-bold mt-0.5">Call</span>
+        </a>
+        <a href="#location" class="flex flex-col items-center justify-center p-2 text-slate-700 hover:text-emerald-700 min-w-[64px]">
+            <i class="fa-solid fa-location-dot text-lg"></i>
+            <span class="text-[10px] font-bold mt-1">Location</span>
+        </a>
+        <button onclick="openModal('prescriptionModal')" class="flex flex-col items-center justify-center p-2 text-slate-700 hover:text-emerald-700 min-w-[64px]">
+            <i class="fa-solid fa-file-medical text-lg"></i>
+            <span class="text-[10px] font-bold mt-1">Upload Rx</span>
+        </button>
+    </div>
+
+    <!-- FLOATING HELP BUTTON & MENU CONTAINER -->
+    <div id="helpWidget" class="fixed bottom-24 lg:bottom-8 right-6 z-30">
+        <button onclick="toggleHelpMenu()" class="w-14 h-14 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white shadow-2xl flex items-center justify-center text-xl transition-all transform hover:scale-110 focus:outline-none">
+            <i class="fa-solid fa-headset"></i>
+        </button>
+
+        <div id="helpMenu" class="hidden absolute bottom-16 right-0 w-64 glass-panel rounded-2xl shadow-2xl border border-slate-200 p-3 space-y-2">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1">Pharmacy Assistance</p>
+            <a id="fabCallBtn" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-xs font-bold text-slate-800 transition-colors">
+                <i class="fa-solid fa-phone text-emerald-700"></i> Call Pharmacist Direct
+            </a>
+            <button onclick="openModal('medicineRequestModal'); toggleHelpMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-xs font-bold text-slate-800 transition-colors text-left">
+                <i class="fa-solid fa-pills text-emerald-700"></i> Request Specific Medicine
+            </button>
+            <button onclick="openModal('deliveryModal'); toggleHelpMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-xs font-bold text-slate-800 transition-colors text-left">
+                <i class="fa-solid fa-truck-fast text-emerald-700"></i> Request Home Delivery
+            </button>
+            <a href="#location" onclick="toggleHelpMenu()" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 text-xs font-bold text-slate-800 transition-colors">
+                <i class="fa-solid fa-map-location-dot text-emerald-700"></i> Get Directions
+            </a>
+        </div>
+    </div>
+
+    <!-- MODAL 1: HOME DELIVERY REQUEST MODAL -->
+    <div id="deliveryModal" class="fixed inset-0 z-50 hidden items-start sm:items-center justify-center p-2 sm:p-4 modal-backdrop overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain p-5 sm:p-8 shadow-2xl relative border border-slate-100 my-auto">
+            <button onclick="closeModal('deliveryModal')" aria-label="Close delivery request" class="absolute top-5 right-5 sm:top-6 sm:right-6 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Home Delivery Request</h3>
+                    <p class="text-xs text-slate-500">Delivery service request</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleDeliverySubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Your Name *</label>
+                    <input type="text" required placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number (WhatsApp) *</label>
+                    <input type="tel" required inputmode="numeric" autocomplete="tel-national" pattern="[0-9]{10}" minlength="10" maxlength="10" title="Enter exactly 10 digits." placeholder="10-digit mobile number" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Medicine / Products Required *</label>
+                    <textarea required rows="3" placeholder="List the medicine names, power (e.g., 500mg), or product items..." class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Quantity</label>
+                        <input type="text" value="10 strips" placeholder="e.g. 10 strips / 1 bottle" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Preferred Time</label>
+                        <select class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                            <option>As soon as possible</option>
+                            <option>Morning (9 AM - 1 PM)</option>
+                            <option>Evening (4 PM - 9 PM)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Delivery Address *</label>
+                    <input type="text" id="deliveryAddress" required placeholder="House number, building, street, and area" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                    <button type="button" onclick="useCurrentDeliveryLocation()" class="mt-2 text-xs font-bold text-emerald-800 hover:text-emerald-700">
+                        <i class="fa-solid fa-location-crosshairs mr-1"></i> Use my current location
+                    </button>
+                    <p id="deliveryLocationStatus" class="mt-1 text-xs text-slate-500" aria-live="polite">Location access requires your permission.</p>
+                </div>
+
+                <div class="pt-2 flex flex-col gap-3">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm shadow-lg transition-all">
+                        Send Delivery Request
+                    </button>
+                    <a id="modalDeliveryCall" class="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs text-center transition-all">
+                        Call Pharmacy Directly Instead
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: UNLISTED MEDICINE REQUEST MODAL -->
+    <div id="medicineRequestModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 my-8">
+            <button onclick="closeModal('medicineRequestModal')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-clipboard-question"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Request Specific Medicine</h3>
+                    <p class="text-xs text-slate-500">We'll check stock & order if unavailable</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleMedicineRequestSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Medicine Name & Strength *</label>
+                    <input type="text" id="reqMedicineName" required placeholder="e.g. Augmentin 625mg or Glycomet SR 500" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Quantity Needed</label>
+                        <input type="text" placeholder="e.g. 3 Strips" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number *</label>
+                        <input type="tel" required inputmode="numeric" autocomplete="tel-national" pattern="[0-9]{10}" minlength="10" maxlength="10" title="Enter exactly 10 digits." placeholder="10-digit mobile number" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Additional Notes</label>
+                    <textarea rows="2" placeholder="Specify preferred brand or urgency..." class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm shadow-lg transition-all">
+                        Check Availability For Me
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PRESCRIPTION UPLOAD MODAL -->
+    <div id="prescriptionModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 my-8">
+            <button onclick="closeModal('prescriptionModal')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-file-medical"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Upload Doctor Prescription</h3>
+                    <p class="text-xs text-slate-500">Quick upload for verification and dispatch</p>
+                </div>
+            </div>
+
+            <form onsubmit="handlePrescriptionSubmit(event)" class="space-y-4">
+                <div class="border-2 border-dashed border-emerald-300 rounded-2xl p-6 text-center bg-emerald-50/50 hover:bg-emerald-50 transition-colors cursor-pointer" onclick="document.getElementById('rxFileInput').click()">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-600 mb-2"></i>
+                    <p class="text-xs font-bold text-slate-800">Click to upload prescription photo or PDF</p>
+                    <p class="text-[11px] text-slate-500 mt-1">Supports PNG, JPG, JPEG, PDF</p>
+                    <input type="file" id="rxFileInput" class="hidden" accept="image/png,image/jpeg,application/pdf" onchange="handleFileSelect(event)">
+                    <div id="filePreview" class="mt-3 hidden text-xs font-semibold text-emerald-700 bg-white p-2 rounded-lg border border-emerald-200"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Customer Name *</label>
+                    <input type="text" required placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number *</label>
+                    <input type="tel" required inputmode="numeric" autocomplete="tel-national" pattern="[0-9]{10}" minlength="10" maxlength="10" title="Enter exactly 10 digits." placeholder="10-digit mobile number" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Optional Note for Pharmacist</label>
+                    <input type="text" placeholder="e.g. Need 1 month dosage, call before packing" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-start gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600 mt-0.5"></i>
+                    <span>Our qualified pharmacist will review your prescription to ensure accuracy before dispensing controlled medicines.</span>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-sm shadow-lg transition-all">
+                        Submit Prescription Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: GALLERY LIGHTBOX -->
+    <div id="galleryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+        <div class="relative max-w-4xl w-full bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+            <button onclick="closeModal('galleryModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white z-10 w-10 h-10 rounded-full bg-slate-900/80 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="p-2 flex items-center justify-center bg-black min-h-[350px] md:min-h-[500px]">
+                <img id="lightboxImg" src="" alt="Store Photo Preview" class="max-h-[75vh] w-auto object-contain rounded-xl">
+            </div>
+            <div class="p-4 bg-slate-900 border-t border-slate-800 text-center">
+                <p id="lightboxCaption" class="text-sm font-bold text-white"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: HEALTH TIP READER MODAL -->
+    <div id="healthModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100">
+            <button onclick="closeModal('healthModal')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="healthModalContent">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed top-24 right-6 z-50 hidden transition-all duration-300 transform translate-y-2">
+        <div class="bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-2xl border border-slate-800 flex items-center gap-3">
+            <div id="toastIcon" class="w-8 h-8 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <h4 id="toastTitle" class="text-xs font-bold text-white">Request Sent</h4>
+                <p id="toastMessage" class="text-[11px] text-slate-300">Our pharmacist will contact you shortly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION & GOOGLE APPS SCRIPT API INTEGRATION -->
+    <script>
+        const APPS_SCRIPT_API_URL = 'https://script.google.com/macros/s/AKfycbzIVdqO5rzFKiBQtAgCoYSi-xULgWRaAfRA_kMkD1WNpNKHY3hmW_L8si5Qb6jwHmN4/exec';
+        const SITE_DATA_CACHE_KEY = 'maruti-pharmacy-site-data-v1';
+        const STORE_LOGO_URL = 'https://ik.imagekit.io/qpw5a0zpn/f9823896-3c58-4257-ab33-79b69e77a3b4__Z2zZVWQS.png'; // Set to a path such as './images/maruti-logo.png'.
+        const SEARCH_PAGE_SIZE = 100;
+        let MEDICINE_DATABASE = [];
+        let MEDICINE_SEARCH_INDEX = [];
+        let CATEGORIES_DATA = [];
+        let GALLERY_ITEMS = [];
+        let searchDebounceTimer;
+        let searchVisibleLimit = SEARCH_PAGE_SIZE;
+        window.__marutiApiCallbacks = Object.create(null);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('yearSpan').textContent = new Date().getFullYear();
+            document.querySelectorAll('input[type="tel"]').forEach(input => {
+                input.addEventListener('input', () => {
+                    input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+                });
+            });
+            loadCachedSiteData();
+            renderGallery('all');
+            fetchLiveGoogleSheetsData();
+        });
+
+        async function fetchLiveGoogleSheetsData() {
+            try {
+                const data = await callBackendApi('getSiteDataPayload');
+                if (!data || data.success !== true) throw new Error('Could not load store data.');
+                applySiteData(data);
+                try {
+                    localStorage.setItem(SITE_DATA_CACHE_KEY, JSON.stringify(data));
+                } catch (error) {
+                    console.warn('Could not cache pharmacy data for the next visit.', error);
+                }
+            } catch (e) {
+                console.error('Could not load live store data.', e);
+                showToast('Store data unavailable', e.message || 'Check the site API and try again.');
+            }
+        }
+
+        function loadCachedSiteData() {
+            try {
+                const cachedData = localStorage.getItem(SITE_DATA_CACHE_KEY);
+                if (!cachedData) return;
+                const data = JSON.parse(cachedData);
+                if (!data || data.success !== true || !Array.isArray(data.inventory)) {
+                    localStorage.removeItem(SITE_DATA_CACHE_KEY);
+                    return;
+                }
+                applySiteData(data);
+            } catch (error) {
+                console.warn('Could not load cached pharmacy data.', error);
+            }
+        }
+
+        function applySiteData(data) {
+            setupLocalConfig(data.config || {});
+            MEDICINE_DATABASE = Array.isArray(data.inventory) ? data.inventory : [];
+            MEDICINE_SEARCH_INDEX = MEDICINE_DATABASE.map(item => ({
+                item,
+                nameText: normalizeSearchText(item.name),
+                nameWords: normalizeSearchText(item.name).split(' ').filter(Boolean),
+                searchText: normalizeSearchText([
+                    item.name,
+                    item.category,
+                    item.desc
+                ].map(value => String(value || '')).join(' ')),
+                searchWords: normalizeSearchText([
+                    item.name,
+                    item.category,
+                    item.desc
+                ].map(value => String(value || '')).join(' ')).split(' ').filter(Boolean)
+            }));
+            renderQuickSearches();
+            CATEGORIES_DATA = Array.isArray(data.categories) ? data.categories : [];
+            GALLERY_ITEMS = Array.isArray(data.gallery) ? data.gallery : [];
+            renderWizardTabs(CATEGORIES_DATA);
+            renderCategories(CATEGORIES_DATA);
+            renderWizardItems(MEDICINE_DATABASE);
+            renderGallery('all');
+            const storeImage = GALLERY_ITEMS.find(item => item.type === 'store' && /^https?:\/\//i.test(item.url));
+            if (storeImage) {
+                const image = document.getElementById('heroStoreImage');
+                image.src = storeImage.url;
+                image.alt = storeImage.title || '';
+                image.classList.remove('hidden');
+            }
+            handleSearch();
+        }
+
+        function callBackendApi(functionName, ...args) {
+            const actions = {
+                getSiteDataPayload: 'getData',
+                handleDeliverySubmission: 'submitDelivery',
+                handleMedicineRequestSubmission: 'submitMedicineRequest',
+                handlePrescriptionSubmission: 'submitPrescription'
+            };
+            const action = actions[functionName];
+            if (!action) return Promise.reject(new Error('Unsupported API action.'));
+            return action === 'getData'
+                ? requestAppsScriptData()
+                : submitAppsScriptForm(action, args[0] || {});
+        }
+
+        function createApiRequestId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID().replace(/-/g, '');
+            }
+            return `${Date.now()}${Math.random().toString(36).slice(2)}`;
+        }
+
+        function requestAppsScriptData() {
+            return new Promise((resolve, reject) => {
+                const requestId = createApiRequestId();
+                const callbackName = `maruti_${requestId}`;
+                const script = document.createElement('script');
+                let settled = false;
+
+                const finish = (error, result) => {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    script.remove();
+                    if (error) reject(error);
+                    else resolve(result);
+                };
+                const timer = setTimeout(() => finish(new Error('The store data request timed out.')), 45000);
+
+                window[callbackName] = result => {
+                    if (!result || result.success !== true) {
+                        finish(new Error(result && result.error || 'Could not load store data.'));
+                        return;
+                    }
+                    finish(null, result);
+                };
+                script.onerror = () => finish(new Error(
+                    'The deployed Apps Script did not return the API response. Replace Code.gs with the current script.txt, save, deploy a new version, and set access to Anyone.'
+                ));
+                const endpoint = new URL(APPS_SCRIPT_API_URL);
+                endpoint.searchParams.set('action', 'getData');
+                endpoint.searchParams.set('callback', callbackName);
+                endpoint.searchParams.set('_', String(Date.now()));
+                script.src = endpoint.toString();
+                document.head.appendChild(script);
+            });
+        }
+
+        function submitAppsScriptForm(action, payload) {
+            return new Promise((resolve, reject) => {
+                const requestId = createApiRequestId();
+                const frameName = `maruti_api_${requestId}`;
+                const iframe = document.createElement('iframe');
+                iframe.name = frameName;
+                iframe.title = 'Request submission response';
+                iframe.setAttribute('aria-hidden', 'true');
+                iframe.style.display = 'none';
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = APPS_SCRIPT_API_URL;
+                form.target = frameName;
+                form.style.display = 'none';
+
+                const appendField = (name, value) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                };
+                appendField('action', action);
+                appendField('payload', JSON.stringify(payload));
+                appendField('requestId', requestId);
+
+                let settled = false;
+                const finish = (error, result) => {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(timer);
+                    window.removeEventListener('message', onMessage);
+                    form.remove();
+                    iframe.remove();
+                    if (error) reject(error);
+                    else resolve(result);
+                };
+                const timer = setTimeout(
+                    () => finish(new Error('The submission timed out. Please check with the pharmacy before retrying.')),
+                    90000
+                );
+                function onMessage(event) {
+                    if (!event.data ||
+                        event.data.source !== 'maruti-apps-script-api' ||
+                        event.data.requestId !== requestId) return;
+                    const result = event.data.result;
+                    if (!result || result.success !== true) {
+                        finish(new Error(result && result.error || 'The request was not saved.'));
+                        return;
+                    }
+                    finish(null, result);
+                }
+
+                window.addEventListener('message', onMessage);
+                document.body.append(iframe, form);
+                form.submit();
+            });
+        }
+
+        function setupLocalConfig(config) {
+            const phone = config.phonePrimary || '';
+            ['navCallBtn', 'deliveryCallBtn', 'dockCallBtn', 'mobileBottomCall', 'fabCallBtn', 'modalDeliveryCall'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (phone) el.href = `tel:${phone.replace(/[^\d+]/g, '')}`;
+                else el.removeAttribute('href');
+            });
+
+            const storeName = config.storeName || 'Maruti Medicines';
+            const brand = document.getElementById('brandNameDisplay');
+            if (brand) brand.textContent = storeName;
+            const logoImage = document.getElementById('storeLogoImage');
+            const logoFallback = document.getElementById('storeLogoFallback');
+            const logoUrl = config.logoUrl || STORE_LOGO_URL;
+            if (logoImage && logoFallback) {
+                logoImage.alt = `${storeName} logo`;
+                logoImage.onload = () => {
+                    logoImage.classList.remove('hidden');
+                    logoFallback.classList.add('hidden');
+                };
+                logoImage.onerror = () => {
+                    console.warn(`Could not load pharmacy logo: ${logoUrl}`);
+                    logoImage.removeAttribute('src');
+                    logoImage.classList.add('hidden');
+                    logoFallback.classList.remove('hidden');
+                };
+                if (logoUrl) logoImage.src = logoUrl;
+                else {
+                    logoImage.removeAttribute('src');
+                    logoImage.classList.add('hidden');
+                    logoFallback.classList.remove('hidden');
+                }
+            }
+            const heroBrand = document.getElementById('heroBrandName');
+            if (heroBrand) heroBrand.textContent = storeName;
+            const heroTitle = document.getElementById('heroStoreTitle');
+            if (heroTitle) heroTitle.textContent = storeName;
+            ['footerStoreName', 'footerCopyrightName', 'contactStoreHeading', 'whyStoreHeading'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const labels = {
+                        footerStoreName: storeName,
+                        footerCopyrightName: storeName,
+                        contactStoreHeading: `Find ${storeName}`,
+                        whyStoreHeading: `Why Choose ${storeName}?`
+                    };
+                    element.textContent = labels[id];
+                }
+            });
+            const location = document.getElementById('locationTagDisplay');
+            if (location) location.textContent = config.locationTag || '';
+            const heroLocation = document.getElementById('heroLocation');
+            if (heroLocation) heroLocation.textContent = config.locationTag || '';
+            document.title = config.storeName || 'Pharmacy';
+            document.getElementById('contactAddress').textContent = config.address || '';
+            document.getElementById('contactPhones').textContent = [config.phonePrimary, config.phoneSecondary].filter(Boolean).join(' / ');
+            document.getElementById('contactHours').textContent = config.hours || '';
+            document.getElementById('deliveryHours').textContent = config.hours || '';
+            document.getElementById('footerHours').textContent = config.hours || '';
+            document.getElementById('footerStoreDescription').textContent = config.description || '';
+            document.getElementById('mapCaption').textContent = config.locationTag || config.address || '';
+            const directionsQuery = config.directionsUrl || config.address || storeName;
+            const whatsapp = document.getElementById('whatsappBtn');
+            if (whatsapp && config.whatsappNumber) whatsapp.href = `https://wa.me/${String(config.whatsappNumber).replace(/\D/g, '')}`;
+            else if (whatsapp) whatsapp.removeAttribute('href');
+            const footerWhatsapp = document.getElementById('footerWhatsapp');
+            if (footerWhatsapp && config.whatsappNumber) footerWhatsapp.href = `https://wa.me/${String(config.whatsappNumber).replace(/\D/g, '')}`;
+            else if (footerWhatsapp) footerWhatsapp.removeAttribute('href');
+            const directions = document.getElementById('getDirectionsBtn');
+            if (directions) {
+                directions.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionsQuery)}`;
+            }
+            const map = document.getElementById('storeMap');
+            const mapPanel = document.getElementById('mapPanel');
+            const mapEmbedUrl = config.mapEmbedUrl || (config.address
+                ? `https://www.google.com/maps?q=${encodeURIComponent(`${storeName}, ${config.address}`)}&output=embed`
+                : '');
+            if (map && mapEmbedUrl && /^https:\/\/www\.google\.com\/maps(?:\/embed|\?)/.test(mapEmbedUrl)) {
+                map.src = mapEmbedUrl;
+                mapPanel.classList.remove('hidden');
+            } else if (mapPanel) {
+                mapPanel.classList.add('hidden');
+            }
+
+            const ticker = document.getElementById('announcementTicker');
+            if (ticker && Array.isArray(config.announcements) && config.announcements.length) {
+                const items = [...config.announcements, ...config.announcements];
+                ticker.innerHTML = items.map(text => `<span class="flex items-center gap-2"><i class="fa-solid fa-star-of-life text-[10px] text-emerald-400"></i> ${escapeHtml(text)}</span>`).join('');
+            } else if (ticker) ticker.replaceChildren();
+        }
+
+        function scheduleSearch() {
+            clearTimeout(searchDebounceTimer);
+            searchVisibleLimit = SEARCH_PAGE_SIZE;
+            searchDebounceTimer = setTimeout(handleSearch, 180);
+        }
+
+        function loadMoreSearchResults() {
+            searchVisibleLimit += SEARCH_PAGE_SIZE;
+            handleSearch();
+        }
+
+        function renderQuickSearches() {
+            const container = document.getElementById('quickSearches');
+            if (!container) return;
+            const commonSearches = ['fever', 'cold', 'cough', 'headache', 'pain relief', 'acidity', 'vitamins', 'ORS'];
+            const availableSearches = commonSearches.filter(query => {
+                const normalizedQuery = normalizeSearchText(query);
+                const queryWords = normalizedQuery.split(' ').filter(Boolean);
+                return MEDICINE_SEARCH_INDEX.some(entry => scoreSearchEntry(entry, normalizedQuery, queryWords) !== null);
+            });
+            const medicineSearches = MEDICINE_SEARCH_INDEX
+                .map(entry => String(entry.item.name || '').trim())
+                .filter(Boolean);
+            const searches = [...new Set([...availableSearches, ...medicineSearches])].slice(0, 8);
+            if (!searches.length) {
+                container.replaceChildren();
+                return;
+            }
+            container.innerHTML = `<span class="w-full text-center text-xs font-semibold text-slate-500">Quick searches</span>${
+                searches.map(query => `<button type="button" data-quick-search="${escapeHtml(query)}" class="px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 text-emerald-800 text-xs font-semibold transition-colors">${escapeHtml(query)}</button>`).join('')
+            }`;
+            container.querySelectorAll('[data-quick-search]').forEach(button => {
+                button.addEventListener('click', () => searchQuickTerm(button.dataset.quickSearch));
+            });
+        }
+
+        function searchQuickTerm(query) {
+            document.getElementById('searchInput').value = query;
+            searchVisibleLimit = SEARCH_PAGE_SIZE;
+            handleSearch();
+        }
+
+        function normalizeSearchText(value) {
+            return String(value || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, ' ')
+                .trim();
+        }
+
+        function getSearchEditDistance(first, second) {
+            if (Math.abs(first.length - second.length) > 2) return 3;
+            let previousPreviousRow = null;
+            let previousRow = Array.from({ length: second.length + 1 }, (_, index) => index);
+
+            for (let firstIndex = 1; firstIndex <= first.length; firstIndex++) {
+                const currentRow = [firstIndex];
+                for (let secondIndex = 1; secondIndex <= second.length; secondIndex++) {
+                    const cost = first[firstIndex - 1] === second[secondIndex - 1] ? 0 : 1;
+                    let distance = Math.min(
+                        currentRow[secondIndex - 1] + 1,
+                        previousRow[secondIndex] + 1,
+                        previousRow[secondIndex - 1] + cost
+                    );
+                    if (
+                        previousPreviousRow &&
+                        first[firstIndex - 1] === second[secondIndex - 2] &&
+                        first[firstIndex - 2] === second[secondIndex - 1]
+                    ) {
+                        distance = Math.min(distance, previousPreviousRow[secondIndex - 2] + 1);
+                    }
+                    currentRow[secondIndex] = distance;
+                }
+                previousPreviousRow = previousRow;
+                previousRow = currentRow;
+            }
+            return previousRow[second.length];
+        }
+
+        function scoreSearchEntry(entry, query, queryWords) {
+            if (entry.searchText.includes(query)) return 0;
+            let score = 0;
+
+            for (const queryWord of queryWords) {
+                let wordScore = Infinity;
+                for (const searchWord of entry.searchWords) {
+                    if (searchWord.includes(queryWord)) {
+                        wordScore = 0;
+                        break;
+                    }
+                    if (queryWord.length < 4 || searchWord.length < 4) continue;
+                    const maxDistance = queryWord.length < 6 ? 1 : 2;
+                    if (Math.abs(queryWord.length - searchWord.length) > maxDistance) continue;
+                    wordScore = Math.min(wordScore, getSearchEditDistance(queryWord, searchWord));
+                }
+                if (wordScore === Infinity || wordScore > (queryWord.length < 6 ? 1 : 2)) return null;
+                score += wordScore;
+            }
+            return score;
+        }
+
+        function getMedicineCorrection(queryWords) {
+            const candidates = new Map();
+            for (const entry of MEDICINE_SEARCH_INDEX) {
+                let score = 0;
+                let hasTypo = false;
+                let isMatch = true;
+                for (const queryWord of queryWords) {
+                    let bestWordScore = Infinity;
+                    for (const nameWord of entry.nameWords) {
+                        if (nameWord === queryWord || nameWord.startsWith(queryWord)) {
+                            bestWordScore = 0;
+                            break;
+                        }
+                        if (queryWord.length < 4 || nameWord.length < 4) continue;
+                        const distance = getSearchEditDistance(queryWord, nameWord);
+                        if (distance <= 2) bestWordScore = Math.min(bestWordScore, distance);
+                    }
+                    if (bestWordScore === Infinity) {
+                        isMatch = false;
+                        break;
+                    }
+                    if (bestWordScore > 0) hasTypo = true;
+                    score += bestWordScore;
+                }
+                if (isMatch && hasTypo) {
+                    const candidate = candidates.get(entry.nameText);
+                    if (!candidate || score < candidate.score) {
+                        candidates.set(entry.nameText, { name: String(entry.item.name), score });
+                    }
+                }
+            }
+
+            const ranked = [...candidates.values()].sort((first, second) => first.score - second.score);
+            if (!ranked.length || (ranked.length > 1 && ranked[0].score === ranked[1].score)) return null;
+            return ranked[0].name;
+        }
+
+        function handleSearch() {
+            const rawQuery = document.getElementById('searchInput').value.trim();
+            const query = normalizeSearchText(rawQuery);
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const container = document.getElementById('searchResultsContainer');
+
+            clearBtn.classList.toggle('hidden', rawQuery.length === 0);
+            if (!MEDICINE_DATABASE.length) {
+                container.innerHTML = '<p class="col-span-full text-center text-sm text-slate-500 py-8">No inventory has been added to the store database yet.</p>';
+                return;
+            }
+            if (!query) {
+                container.innerHTML = '<p class="col-span-full text-center text-sm text-slate-500 py-4">Enter a name or category to search current inventory.</p>';
+                return;
+            }
+
+            const queryWords = query.split(' ').filter(Boolean);
+            const filtered = MEDICINE_SEARCH_INDEX
+                .map(entry => ({ ...entry, relevance: scoreSearchEntry(entry, query, queryWords) }))
+                .filter(entry => entry.relevance !== null)
+                .sort((first, second) => first.relevance - second.relevance);
+            const correction = getMedicineCorrection(queryWords);
+            const correctionMarkup = correction
+                ? `<div class="col-span-full text-center text-sm text-slate-600">Did you mean <button id="correctedSearchButton" type="button" class="font-bold text-emerald-800 underline underline-offset-2 hover:text-emerald-950">${escapeHtml(correction)}</button>?</div>`
+                : '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    ${correctionMarkup}
+                    <div class="col-span-full bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-2xl mb-2"></i>
+                        <p class="font-bold text-slate-800 text-sm">No inventory match found for "${escapeHtml(rawQuery)}"</p>
+                        <p class="text-xs text-slate-500 mt-1">Check the spelling or try a medicine name, category, or inventory keyword.</p>
+                        <button id="searchRequestButton" class="mt-4 px-4 py-2 bg-emerald-700 text-white rounded-xl text-xs font-bold hover:bg-emerald-800 transition-colors">
+                            Request "${escapeHtml(rawQuery)}"
+                        </button>
+                    </div>`;
+                document.getElementById('searchRequestButton').addEventListener('click', () => requestSpecificMedicine(rawQuery));
+                const correctionButton = document.getElementById('correctedSearchButton');
+                if (correctionButton) correctionButton.addEventListener('click', () => searchQuickTerm(correction));
+                return;
+            }
+
+            const visibleResults = filtered.slice(0, searchVisibleLimit);
+            const resultsSummary = `<p class="col-span-full text-xs text-slate-500" role="status">Showing ${visibleResults.length} of ${filtered.length} matching medicines</p>`;
+            const resultCards = visibleResults.map(({ item }) => {
+                let badge = `<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold border border-emerald-200">🟢 Available</span>`;
+                if (item.status === 'check') badge = `<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold border border-amber-200">🟡 Check Stock</span>`;
+                if (item.status === 'unavailable') badge = `<span class="px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold border border-rose-200">🔴 Unavailable</span>`;
+                const icon = /^[a-z0-9 -]+$/i.test(item.icon || '') ? item.icon : 'fa-pills';
+
+                return `
+                    <div class="min-w-0 bg-white rounded-2xl p-3 sm:p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col gap-3">
+                        <div class="flex min-w-0 items-start gap-2.5">
+                            <div class="search-result-icon w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid ${icon} text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex flex-col items-start gap-1">
+                                    <h4 class="font-bold text-slate-900 text-sm sm:text-base leading-tight break-words">${escapeHtml(item.name)}</h4>
+                                    ${badge}
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1 line-clamp-2 break-words">${escapeHtml(item.desc)}</p>
+                                <span class="text-[10px] font-semibold text-slate-400 mt-1 inline-block break-words">Category: ${escapeHtml(item.category)}</span>
+                            </div>
+                        </div>
+                        <button data-request-name="${escapeHtml(item.name)}" class="w-full px-2 py-2.5 rounded-xl bg-slate-900 hover:bg-emerald-800 text-white font-bold text-[11px] sm:text-xs transition-colors">
+                            Request Item <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i>
+                        </button>
+                    </div>`;
+            }).join('');
+            const loadMoreButton = visibleResults.length < filtered.length
+                ? `<button type="button" onclick="loadMoreSearchResults()" class="col-span-full justify-self-center px-5 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs transition-colors">Load 100 more (${filtered.length - visibleResults.length} remaining)</button>`
+                : '';
+            container.innerHTML = `${correctionMarkup}${resultsSummary}${resultCards}${loadMoreButton}`;
+            const correctionButton = document.getElementById('correctedSearchButton');
+            if (correctionButton) correctionButton.addEventListener('click', () => searchQuickTerm(correction));
+            container.querySelectorAll('[data-request-name]').forEach(button => {
+                button.addEventListener('click', () => requestSpecificMedicine(button.dataset.requestName));
+            });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        function setSearchQuery(q) {
+            document.getElementById('searchInput').value = q;
+            searchVisibleLimit = SEARCH_PAGE_SIZE;
+            clearTimeout(searchDebounceTimer);
+            handleSearch();
+            document.getElementById('search').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchVisibleLimit = SEARCH_PAGE_SIZE;
+            clearTimeout(searchDebounceTimer);
+            handleSearch();
+        }
+
+        function requestSpecificMedicine(name) {
+            document.getElementById('reqMedicineName').value = name;
+            openModal('medicineRequestModal');
+        }
+
+        function renderCategories(list) {
+            const container = document.getElementById('categoriesGrid');
+            if (!container) return;
+            if (!list.length) {
+                container.innerHTML = '<p class="col-span-full text-center text-sm text-slate-500 py-8">No categories have been added yet.</p>';
+                return;
+            }
+            container.innerHTML = list.map(cat => `
+                <button type="button" data-category="${escapeHtml(cat.name)}" class="group text-left bg-slate-50 hover:bg-emerald-900 text-slate-900 hover:text-white p-6 rounded-3xl border border-slate-200/80 transition-all duration-300 cursor-pointer flex flex-col justify-between h-52">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-white group-hover:bg-emerald-800 text-emerald-700 group-hover:text-emerald-300 flex items-center justify-center text-xl transition-colors shadow-sm">
+                            <i class="fa-solid ${/^[a-z0-9 -]+$/i.test(cat.icon || '') ? cat.icon : 'fa-pills'}"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 group-hover:text-emerald-300 uppercase tracking-wider">${escapeHtml(cat.count)}</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">${escapeHtml(cat.name)}</h3>
+                        <p class="text-xs text-slate-500 group-hover:text-emerald-200 mt-1 line-clamp-2">${escapeHtml(cat.desc)}</p>
+                    </div>
+                </button>`).join('');
+            container.querySelectorAll('[data-category]').forEach(button => {
+                button.addEventListener('click', () => setSearchQuery(button.dataset.category));
+            });
+        }
+
+        function renderWizardTabs(categories) {
+            const container = document.getElementById('wizardTabs');
+            const options = [{ name: 'All items', category: 'all' }, ...categories.map(category => ({
+                name: category.name,
+                category: category.name
+            }))];
+            container.innerHTML = options.map((option, index) => `
+                <button type="button" data-filter-category="${escapeHtml(option.category)}"
+                    class="wizard-tab px-5 py-3 rounded-2xl text-xs font-bold border transition-all ${
+                        index === 0
+                            ? 'bg-emerald-800 text-white border-emerald-800 shadow-md'
+                            : 'bg-white text-slate-700 border-slate-200 hover:border-emerald-600'
+                    }">${escapeHtml(option.name)}</button>`).join('');
+            container.querySelectorAll('[data-filter-category]').forEach(button => {
+                button.addEventListener('click', () => filterWizard(button.dataset.filterCategory, button));
+            });
+        }
+
+        function filterWizard(tabKey, selectedButton) {
+            const tabs = document.querySelectorAll('.wizard-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-emerald-800', 'text-white', 'border-emerald-800', 'shadow-md');
+                tab.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+            });
+            selectedButton.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+            selectedButton.classList.add('bg-emerald-800', 'text-white', 'border-emerald-800', 'shadow-md');
+
+            if (tabKey === 'all') {
+                renderWizardItems(MEDICINE_DATABASE);
+            } else {
+                renderWizardItems(MEDICINE_DATABASE.filter(i => String(i.category || '').toLowerCase().includes(tabKey.toLowerCase())));
+            }
+        }
+
+        function renderWizardItems(items) {
+            const container = document.getElementById('wizardGridContainer');
+            if (!container) return;
+            if (items.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-sm text-slate-500 py-8">${
+                    MEDICINE_DATABASE.length ? 'No products match this category.' : 'No inventory has been added yet.'
+                }</p>`;
+                return;
+            }
+            container.innerHTML = items.slice(0, 8).map(item => `
+                <div class="min-w-0 bg-white p-3 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">${escapeHtml(item.category)}</span>
+                            <span class="w-2 h-2 rounded-full ${item.status === 'available' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">${escapeHtml(item.name)}</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2">${escapeHtml(item.desc)}</p>
+                    </div>
+                    <button data-request-name="${escapeHtml(item.name)}" class="mt-4 w-full py-2 rounded-xl bg-slate-100 hover:bg-emerald-100 hover:text-emerald-800 font-bold text-xs text-slate-700 transition-colors">
+                        Inquire / Request
+                    </button>
+                </div>`).join('');
+            container.querySelectorAll('[data-request-name]').forEach(button => {
+                button.addEventListener('click', () => requestSpecificMedicine(button.dataset.requestName));
+            });
+        }
+
+        function renderGallery(filter) {
+            const container = document.getElementById('galleryGrid');
+            if (!container) return;
+            const list = filter === 'all' ? GALLERY_ITEMS : GALLERY_ITEMS.filter(g => g.type === filter);
+            if (!list.length) {
+                container.innerHTML = '<p class="col-span-full text-center text-sm text-slate-500 py-8">No gallery images have been added yet.</p>';
+                return;
+            }
+            container.innerHTML = list.map(img => `
+                <button type="button" data-gallery-url="${escapeHtml(img.url)}" data-gallery-title="${escapeHtml(img.title)}" class="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer h-64 bg-slate-100 text-left">
+                    <img src="${/^https?:\/\//i.test(img.url || '') ? escapeHtml(img.url) : ''}" alt="${escapeHtml(img.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <p class="text-xs font-bold text-white"><i class="fa-solid fa-magnifying-glass-plus mr-1"></i> ${escapeHtml(img.title)}</p>
+                    </div>
+                </button>`).join('');
+            container.querySelectorAll('[data-gallery-url]').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (/^https?:\/\//i.test(button.dataset.galleryUrl)) {
+                        openLightbox(button.dataset.galleryUrl, button.dataset.galleryTitle);
+                    }
+                });
+            });
+        }
+
+        function filterGallery(type) {
+            const buttons = document.querySelectorAll('.gallery-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-emerald-800', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-700');
+            });
+            event.currentTarget.classList.remove('bg-slate-100', 'text-slate-700');
+            event.currentTarget.classList.add('bg-emerald-800', 'text-white');
+            renderGallery(type);
+        }
+
+        function openLightbox(url, title) {
+            document.getElementById('lightboxImg').src = url;
+            document.getElementById('lightboxCaption').innerText = title;
+            openModal('galleryModal');
+        }
+
+        function openHealthModal(type) {
+            const container = document.getElementById('healthModalContent');
+            if (type === 'storage') {
+                container.innerHTML = `
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Storing Medicines Correctly</h3>
+                    <p class="text-xs font-semibold text-emerald-700 mb-4">Pharmacy Care Guideline</p>
+                    <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <p>1. Keep medicines in a cool, dry place away from direct sunlight and humidity.</p>
+                        <p>2. Products like Insulin injections and probiotic suspensions must be stored in the refrigerator (2°C - 8°C).</p>
+                        <p>3. Keep all medicines safely out of reach of children.</p>
+                    </div>`;
+            } else if (type === 'firstaid') {
+                container.innerHTML = `
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Essential Home First Aid Kit</h3>
+                    <p class="text-xs font-semibold text-emerald-700 mb-4">Pharmacy Care Guideline</p>
+                    <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <p>• Antiseptic liquid & Povidone-Iodine ointment.</p>
+                        <p>• Sterile gauze pads, cotton rolls, and adhesive bandages.</p>
+                        <p>• Digital thermometer & pulse oximeter.</p>
+                    </div>`;
+            } else if (type === 'hydration') {
+                container.innerHTML = `
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Dehydration & Hydration Care</h3>
+                    <p class="text-xs font-semibold text-emerald-700 mb-4">Pharmacy Care Guideline</p>
+                    <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <p>During viral fevers, body electrolytes drain quickly leading to fatigue.</p>
+                        <p>Sip WHO-recommended Oral Rehydration Salts (ORS) in clean drinking water throughout the day.</p>
+                    </div>`;
+            }
+            openModal('healthModal');
+        }
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if (m) { m.classList.remove('flex'); m.classList.add('hidden'); }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function toggleHelpMenu() {
+            document.getElementById('helpMenu').classList.toggle('hidden');
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('filePreview');
+            if (file) {
+                const allowedTypes = ['image/png', 'image/jpeg', 'application/pdf'];
+                if (!allowedTypes.includes(file.type)) {
+                    e.target.value = '';
+                    preview.classList.add('hidden');
+                    showToast('Invalid file', 'Choose a PNG, JPG, or PDF file.');
+                    return;
+                }
+                preview.classList.remove('hidden');
+                preview.innerText = `Selected File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            }
+        }
+
+        async function handleDeliverySubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sending...";
+
+            try {
+                const payload = {
+                    name: form.querySelector('input[placeholder*="full name"]').value,
+                    phone: form.querySelector('input[type="tel"]').value,
+                    products: form.querySelector('textarea').value,
+                    quantity: form.querySelector('input[placeholder*="Strips"]').value,
+                    time: form.querySelector('select').value,
+                    address: form.querySelector('input[placeholder*="House number"]').value
+                };
+                const result = await callBackendApi('handleDeliverySubmission', payload);
+                if (!result || result.success !== true) throw new Error(result && result.error || 'Request was not saved.');
+                closeModal('deliveryModal');
+                showToast("Delivery Request Sent", result.message || "Your request was saved.");
+                form.reset();
+            } catch (err) {
+                console.error('Delivery request failed.', err);
+                showToast("Request Not Sent", err.message || "Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Send Delivery Request";
+            }
+        }
+
+        function useCurrentDeliveryLocation() {
+            const status = document.getElementById('deliveryLocationStatus');
+            const address = document.getElementById('deliveryAddress');
+            if (!navigator.geolocation) {
+                status.textContent = 'Location is not supported by this browser. Enter your address manually.';
+                return;
+            }
+
+            status.textContent = 'Getting your location...';
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    const mapUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
+                    address.value = `Location pin: ${latitude}, ${longitude} (${mapUrl})`;
+                    status.textContent = 'Location added. Please include your house number and street for delivery.';
+                },
+                error => {
+                    const messages = {
+                        1: 'Location permission was denied. Allow location access or enter your address manually.',
+                        2: 'Your location is unavailable. Try again or enter your address manually.',
+                        3: 'Location request timed out. Try again or enter your address manually.'
+                    };
+                    status.textContent = messages[error.code] || 'Could not get your location. Enter your address manually.';
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+            );
+        }
+
+        async function handleMedicineRequestSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+
+            const payload = {
+                medicineName: document.getElementById('reqMedicineName').value,
+                quantity: form.querySelector('input[placeholder*="Strips"]').value,
+                phone: form.querySelector('input[type="tel"]').value,
+                notes: form.querySelector('textarea').value
+            };
+
+            try {
+                const result = await callBackendApi('handleMedicineRequestSubmission', payload);
+                if (!result || result.success !== true) throw new Error(result && result.error || 'Request was not saved.');
+                closeModal('medicineRequestModal');
+                showToast("Medicine Request Sent", result.message || "Your request was saved.");
+                form.reset();
+            } catch (err) {
+                console.error('Medicine request failed.', err);
+                showToast("Request Not Sent", err.message || "Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Check Availability For Me";
+            }
+        }
+
+        async function handlePrescriptionSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fileInput = document.getElementById('rxFileInput');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast("No file selected", "Select a prescription image or PDF first.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!['image/png', 'image/jpeg', 'application/pdf'].includes(file.type)) {
+                showToast('Invalid file', 'Choose a PNG, JPG, or PDF file.');
+                return;
+            }
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Uploading securely...";
+            try {
+                const fileBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => reject(new Error('Could not read the selected file.'));
+                    reader.readAsDataURL(file);
+                });
+                const payload = {
+                    name: form.querySelector('input[placeholder*="full name"]').value,
+                    phone: form.querySelector('input[type="tel"]').value,
+                    notes: form.querySelector('input[placeholder*="dosage"]').value,
+                    fileName: file.name,
+                    fileBase64: fileBase64
+                };
+                const result = await callBackendApi('handlePrescriptionSubmission', payload);
+                if (!result || result.success !== true) throw new Error(result && result.error || 'Prescription was not saved.');
+                closeModal('prescriptionModal');
+                showToast("Prescription Uploaded", result.message || "The prescription was saved.");
+                document.getElementById('filePreview').classList.add('hidden');
+                form.reset();
+            } catch (err) {
+                console.error('Prescription upload failed.', err);
+                showToast("Upload Failed", err.message || "Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Prescription Request";
+            }
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, 4500);
+        }
+    </script>
+</body>
+</html>
